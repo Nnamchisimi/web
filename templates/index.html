@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Part Number Search</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { width: 80%; margin: auto; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f4f4f4; }
+        .form-group { margin-bottom: 20px; }
+        input[type="text"] { width: 300px; padding: 10px; }
+        input[type="submit"] { padding: 10px 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Search for Customer info</h1>
+        <form method="post">
+            <div class="form-group">
+                <label for="Customer_info">Enter Customer info:</label>
+                <input type="text" id="Customer_info" name="Customer_info" required>
+            </div>
+            <input type="submit" value="Search">
+        </form>
+
+        {% if part_details is not none %}
+        {% if part_details.shape[0] > 0 %}
+        <h2> Details:</h2>
+        <table>
+            <thead>
+                <tr>
+                    {% for col in part_details.columns %}
+                    <th>{{ col }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for index, row in part_details.iterrows() %}
+                <tr>
+                    {% for col in part_details.columns %}
+                    <td>{{ row[col] }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No details found for the entered Customer info.</p>
+        {% endif %}
+        {% endif %}
+    </div>
+</body>
+</html>
