@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Part Number Search</title>
+    <title>Part Details Lookup</title>
     <style>
         body { font-family: Arial, sans-serif; }
         .container { width: 80%; margin: auto; padding: 20px; }
@@ -26,30 +26,10 @@
             <input type="submit" value="Search">
         </form>
 
-        {% if part_details is not none %}
-        {% if part_details.shape[0] > 0 %}
-        <h2> Details:</h2>
-        <table>
-            <thead>
-                <tr>
-                    {% for col in part_details.columns %}
-                    <th>{{ col }}</th>
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for index, row in part_details.iterrows() %}
-                <tr>
-                    {% for col in part_details.columns %}
-                    <td>{{ row[col] }}</td>
-                    {% endfor %}
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        {% if part_details %}
+            {{ part_details|safe }}
         {% else %}
-        <p>No details found for the entered Customer info.</p>
-        {% endif %}
+            <p>No details found for the entered Customer info.</p>
         {% endif %}
     </div>
 </body>
