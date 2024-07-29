@@ -1,5 +1,9 @@
 from flask import Flask, request, render_template
 import pandas as pd
+import webbrowser
+import threading
+import time
+import os
 
 app = Flask(__name__)
 
@@ -27,7 +31,6 @@ columns_to_display = [
     'expectedstockentrydate',
     'status',
     'StockEntryDate',
-
 ]
 
 @app.route('/', methods=['GET', 'POST'])
@@ -54,5 +57,21 @@ def index():
 
     return render_template('index.html', part_details=part_details_html, no_details_found=no_details_found)
 
+def open_browser():
+    """Open the browser to the Flask app URL."""
+    url = 'http://127.0.0.1:5000/'
+    webbrowser.open_new(url)
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Start the Flask server in a new thread
+    def run_server():
+        app.run(debug=True, use_reloader=False)  # Turn off reloader to avoid multiple starts
+
+    server_thread = threading.Thread(target=run_server)
+    server_thread.start()
+
+    # Allow some time for the server to start before opening the browser
+    time.sleep(2)  # Adjust if necessary
+
+    # Open the browser
+    open_browser()
