@@ -4,7 +4,7 @@ import pandas as pd
 app = Flask(__name__)
 
 # Load the Excel file into a global DataFrame
-file_path = r'C:\Users\User\Desktop\web\fupdated_StarOrderplus_Order_items_with_expected_stock_entry_date.xlsx'  # Replace with your file path
+file_path = r'C:\Users\User\Desktop\web\cstcketrd_expstckentryd_status_trcklnk_trckno.xlsx'  # Replace with your file path
 df = pd.read_excel(file_path)
 
 # List of columns to display
@@ -26,7 +26,8 @@ columns_to_display = [
     'tracking_details',
     'expectedstockentrydate',
     'status',
-    'StockEntryDate'
+    'StockEntryDate',
+
 ]
 
 @app.route('/', methods=['GET', 'POST'])
