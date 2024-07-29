@@ -28,7 +28,7 @@
 
         {% if part_details %}
             {{ part_details|safe }}
-        {% else %}
+        {% elif no_details_found %}
             <p>No details found for the entered Customer info.</p>
         {% endif %}
     </div>

@@ -31,22 +31,27 @@ columns_to_display = [
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    part_details = None
+    part_details_html = None  # Initialize the variable
+    no_details_found = False  # Flag to indicate if no details were found
+    
     if request.method == 'POST':
         pn_ordered = request.form.get('Customer_info').strip()
         if 'Customer info' in df.columns:
             part_details = df[df['Customer info'].astype(str).str.contains(pn_ordered, case=False, na=False)]
-            part_details = part_details[columns_to_display]  # Filter columns
+            if not part_details.empty:
+                part_details = part_details[columns_to_display]  # Filter columns
 
-            # Convert tracking_details to clickable links
-            part_details['tracking_details'] = part_details['tracking_details'].apply(lambda x: f'<a href="{x}" target="_blank">{x}</a>' if pd.notnull(x) and x != 'Not Found' else '')
+                # Convert tracking_details to clickable links
+                part_details['tracking_details'] = part_details['tracking_details'].apply(lambda x: f'<a href="{x}" target="_blank">{x}</a>' if pd.notnull(x) and x != 'Not Found' else '')
 
-            # Convert DataFrame to HTML and allow for safe rendering
-            part_details_html = part_details.to_html(classes='table table-striped', escape=False, index=False)
+                # Convert DataFrame to HTML and allow for safe rendering
+                part_details_html = part_details.to_html(classes='table table-striped', escape=False, index=False)
+            else:
+                no_details_found = True
         else:
             part_details_html = '<p>Column "Customer info" does not exist in the Excel file.</p>'
 
-    return render_template('index.html', part_details=part_details_html)
+    return render_template('index.html', part_details=part_details_html, no_details_found=no_details_found)
 
 if __name__ == '__main__':
     app.run(debug=True)
