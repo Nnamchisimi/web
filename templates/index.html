@@ -17,11 +17,11 @@
 </head>
 <body>
     <div class="container">
-        <h1>Search for Customer info</h1>
+        <h1>Kombos Otomotiv</h1>
         <form method="post">
             <div class="form-group">
-                <label for="Customer_info">Enter Customer info:</label>
-                <input type="text" id="Customer_info" name="Customer_info" required>
+                <label for="search_query">Enter Customer info, Part number, or Backorder:</label>
+                <input type="text" id="search_query" name="search_query" required>
             </div>
             <input type="submit" value="Search">
         </form>
@@ -29,7 +29,7 @@
         {% if part_details %}
             {{ part_details|safe }}
         {% elif no_details_found %}
-            <p>No details found for the entered Customer info.</p>
+            <p>No details found for the entered criteria.</p>
         {% endif %}
     </div>
 </body>
