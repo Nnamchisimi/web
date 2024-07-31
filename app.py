@@ -3,45 +3,50 @@ import pandas as pd
 import webbrowser
 import threading
 import time
-import os
 
 app = Flask(__name__)
 
 # Load the Excel file into a global DataFrame
-file_path = r'C:\Users\User\Desktop\web\cstcketrd_expstckentryd_status_trcklnk_trckno.xlsx'  # Replace with your file path
+file_path = r'C:\Users\User\Desktop\web\cstcketrd_expstckentryd_status_trcklnk_trckno (11).xlsx'  # Correct file path
 df = pd.read_excel(file_path)
 
 # List of columns to display
 columns_to_display = [
-    'Designation of part no. ordered',
-    'Designation of part no. confirmed',
-    'Ord. date',
-    'Items status',
-    'Inv. date dispatch date',
-    'Conf. DD confirmed dispatch date',
-    'Expected DD expecte to be dispatched',
+    'Part number',
+    'Designation of part no. Ordered',
     'DN no.',
     'Inv. no.',
     'Q ordered',
     'Customer info',
-    'Part number',
     'Dist. ch.',
-    'Tracking No',
+    'Items status',
     'tracking_details',
     'expectedstockentrydate',
+    'Expected DD expecte to be dispatched',
     'status',
-    'StockEntryDate',
+    'StockEntryDate'
+    
 ]
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     part_details_html = None  # Initialize the variable
     no_details_found = False  # Flag to indicate if no details were found
-    
+
     if request.method == 'POST':
-        pn_ordered = request.form.get('Customer_info').strip()
-        if 'Customer info' in df.columns:
-            part_details = df[df['Customer info'].astype(str).str.contains(pn_ordered, case=False, na=False)]
+        search_query = request.form.get('search_query')
+
+        if search_query:
+            search_query = search_query.strip()  # Ensure no leading or trailing spaces
+
+            # Create filters based on the search query
+            filters = (
+                df['Customer info'].astype(str).str.contains(search_query, case=False, na=False) |
+                df['Part number'].astype(str).str.contains(search_query, case=False, na=False) |
+                df['list_of_backorders'].astype(str).str.contains(search_query, case=False, na=False)
+            )
+
+            part_details = df[filters]
             if not part_details.empty:
                 part_details = part_details[columns_to_display]  # Filter columns
 
@@ -53,7 +58,7 @@ def index():
             else:
                 no_details_found = True
         else:
-            part_details_html = '<p>Column "Customer info" does not exist in the Excel file.</p>'
+            no_details_found = True
 
     return render_template('index.html', part_details=part_details_html, no_details_found=no_details_found)
 
@@ -71,7 +76,7 @@ if __name__ == '__main__':
     server_thread.start()
 
     # Allow some time for the server to start before opening the browser
-    time.sleep(2)  # Adjust if necessary
+    time.sleep(1)  # Adjust if necessary
 
     # Open the browser
     open_browser()
