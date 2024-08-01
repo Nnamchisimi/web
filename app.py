@@ -7,7 +7,7 @@ import time
 app = Flask(__name__)
 
 # Load the Excel file into a global DataFrame
-file_path = r'C:\Users\User\Desktop\web\cstcketrd_expstckentryd_status_trcklnk_trckno (11).xlsx'  # Correct file path
+file_path = r'C:\Users\User\Desktop\web\zcstcketrd_expstckentryd_status_trcklnk_trckno.xlsx'  # Correct file path
 df = pd.read_excel(file_path)
 
 # List of columns to display
@@ -25,7 +25,6 @@ columns_to_display = [
     'Expected DD expecte to be dispatched',
     'status',
     'StockEntryDate'
-    
 ]
 
 @app.route('/', methods=['GET', 'POST'])
@@ -40,11 +39,20 @@ def index():
             search_query = search_query.strip()  # Ensure no leading or trailing spaces
 
             # Create filters based on the search query
-            filters = (
-                df['Customer info'].astype(str).str.contains(search_query, case=False, na=False) |
-                df['Part number'].astype(str).str.contains(search_query, case=False, na=False) |
-                df['list_of_backorders'].astype(str).str.contains(search_query, case=False, na=False)
-            )
+            if 'backorder' in search_query.lower():
+                filters = (
+                    df['Customer info'].astype(str).str.contains(search_query, case=False, na=False) |
+                    df['Part number'].astype(str).str.contains(search_query, case=False, na=False) |
+                    (df['list_of_backorders'].astype(str).str.contains(search_query, case=False, na=False) &
+                     (df['status'] != 'Rejected'))
+                )
+            else:
+                filters = (
+                    df['Customer info'].astype(str).str.contains(search_query, case=False, na=False) |
+                    df['Part number'].astype(str).str.contains(search_query, case=False, na=False) |
+                    df['list_of_backorders'].astype(str).str.contains(search_query, case=False, na=False) |
+                    (df['status'].str.contains(search_query, case=False, na=False))
+                )
 
             part_details = df[filters]
             if not part_details.empty:
