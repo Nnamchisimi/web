@@ -3,6 +3,7 @@ import pandas as pd
 import webbrowser
 import threading
 import time
+import re
 
 app = Flask(__name__)
 
@@ -37,24 +38,30 @@ def index():
 
         if search_query:
             search_query = search_query.strip()  # Ensure no leading or trailing spaces
+            lower_search_query = search_query.lower()  # Lowercase the search query for consistent comparison
 
             # Create filters based on the search query
-            if 'backorder' in search_query.lower():
+            if 'backorder' in lower_search_query:
                 filters = (
                     df['Customer info'].astype(str).str.contains(search_query, case=False, na=False) |
                     df['Part number'].astype(str).str.contains(search_query, case=False, na=False) |
                     (df['list_of_backorders'].astype(str).str.contains(search_query, case=False, na=False) &
-                     (df['status'] != 'Rejected'))
+                     (df['status'].str.lower() != 'rejected'))
                 )
             else:
                 filters = (
                     df['Customer info'].astype(str).str.contains(search_query, case=False, na=False) |
                     df['Part number'].astype(str).str.contains(search_query, case=False, na=False) |
                     df['list_of_backorders'].astype(str).str.contains(search_query, case=False, na=False) |
-                    (df['status'].str.contains(search_query, case=False, na=False))
+                    (df['status'].str.lower().str.contains(r'\b{}\b'.format(re.escape(lower_search_query)), na=False))
                 )
 
-            part_details = df[filters]
+            # Apply filter and handle empty results
+            if lower_search_query == "back":
+                part_details = pd.DataFrame()  # Empty DataFrame
+            else:
+                part_details = df[filters] if filters.any() else pd.DataFrame()  # Apply filters or create an empty DataFrame
+
             if not part_details.empty:
                 part_details = part_details[columns_to_display]  # Filter columns
 
