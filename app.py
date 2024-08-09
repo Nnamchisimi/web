@@ -8,7 +8,7 @@ import re
 app = Flask(__name__)
 
 # Load the Excel file into a global DataFrame
-file_path = r'C:\Users\User\Desktop\web\zcstcketrd_expstckentryd_status_trcklnk_trckno.xlsx'  # Correct file path
+file_path = r'C:\Users\User\Desktop\web\augzcstcketrd_expstckentryd_status_trcklnk_trckno.xlsx'  # Correct file path
 df = pd.read_excel(file_path)
 
 # List of columns to display
@@ -57,7 +57,7 @@ def index():
                 )
 
             # Apply filter and handle empty results
-            if lower_search_query == "back":
+            if lower_search_query in ["back", "bac", "backo", "backor", "backord", "backorde"]:
                 part_details = pd.DataFrame()  # Empty DataFrame
             else:
                 part_details = df[filters] if filters.any() else pd.DataFrame()  # Apply filters or create an empty DataFrame
